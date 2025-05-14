@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { TrainFront, Shield, BarChart3, Bell, Wrench } from "lucide-react";
+import { TrainFront, Shield, BarChart3, Bell, Wrench, LogIn, UserPlus } from "lucide-react";
 
 const HomePage = () => {
   return (
@@ -26,10 +26,21 @@ const HomePage = () => {
               <div className="flex flex-wrap gap-4">
                 <Link to="/login">
                   <Button size="lg" className="bg-ir-blue hover:bg-blue-700">
-                    Access Dashboard
+                    <LogIn className="mr-2 h-5 w-5" />
+                    Login
                   </Button>
                 </Link>
-                <Button variant="outline" size="lg" className="border-gray-600 text-white hover:bg-gray-800">
+                <Link to="/register">
+                  <Button size="lg" variant="outline" className="border-ir-blue text-ir-blue hover:bg-gray-800">
+                    <UserPlus className="mr-2 h-5 w-5" />
+                    Register
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white transition-all"
+                >
                   Learn More
                 </Button>
               </div>

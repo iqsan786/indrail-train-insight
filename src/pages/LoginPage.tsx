@@ -1,26 +1,22 @@
 
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrainFront, Key, User, AlertCircle } from "lucide-react";
-import OTPInput from "@/components/OTPInput";
+import { TrainFront, Key, User } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password || !otp) {
+    if (!username || !password) {
       toast({
         title: "Required Fields",
         description: "Please fill in all fields",
@@ -32,10 +28,12 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const success = await login(username, password, otp);
-      if (success) {
-        navigate("/dashboard");
-      }
+      // Store username and password in session storage for OTP verification
+      sessionStorage.setItem("username", username);
+      sessionStorage.setItem("password", password);
+      
+      // Navigate to OTP verification page
+      navigate("/verify-otp");
     } finally {
       setIsLoading(false);
     }
@@ -87,27 +85,12 @@ const LoginPage = () => {
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-300 text-center">
-                  One-Time Password
-                </label>
-                <OTPInput
-                  length={6}
-                  value={otp}
-                  onChange={setOtp}
-                />
-                <p className="text-xs text-center text-gray-500 mt-2">
-                  <AlertCircle className="h-3 w-3 inline mr-1" />
-                  For demo purposes, use OTP: 123456
-                </p>
-              </div>
-              
               <Button 
                 type="submit" 
                 className="w-full bg-ir-blue hover:bg-blue-700" 
                 disabled={isLoading}
               >
-                {isLoading ? "Authenticating..." : "Login"}
+                {isLoading ? "Processing..." : "Continue"}
               </Button>
             </form>
           </CardContent>

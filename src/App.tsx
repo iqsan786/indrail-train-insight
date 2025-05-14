@@ -8,7 +8,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/Dashboard";
+import OTPVerificationPage from "./pages/OTPVerificationPage";
+import RegistrationPage from "./pages/RegistrationPage";
+import Dashboard from "./pages/Dashboard";
 import TrainDetailPage from "./pages/TrainDetailPage";
 import NotFound from "./pages/NotFound";
 
@@ -24,7 +26,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/verify-otp" element={<OTPVerificationPage />} />
+            <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/:trainId" element={<TrainDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
