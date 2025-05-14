@@ -36,8 +36,7 @@ const TrainHealthIndex = ({ healthIndex, suggestion }: TrainHealthIndexProps) =>
           </div>
           <Progress 
             value={healthIndex} 
-            className="h-2 mb-8" 
-            indicatorClassName={getStatusColor()}
+            className={`h-2 mb-8 ${getStatusColor()}`}
           />
         </div>
         

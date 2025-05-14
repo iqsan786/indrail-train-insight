@@ -1,3 +1,8 @@
 
 import DashboardPage from './DashboardPage';
-export default DashboardPage;
+
+const Dashboard = () => {
+  return <DashboardPage />;
+};
+
+export default Dashboard;

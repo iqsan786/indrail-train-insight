@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { TrainFront, Shield, BarChart3, Bell, Tool } from "lucide-react";
+import { TrainFront, Shield, BarChart3, Bell, Wrench } from "lucide-react";
 
 const HomePage = () => {
   return (
@@ -102,7 +102,7 @@ const HomePage = () => {
               <CardContent className="pt-6">
                 <div className="flex justify-center mb-4">
                   <div className="p-3 bg-blue-900/30 rounded-full">
-                    <Tool className="h-6 w-6 text-ir-blue" />
+                    <Wrench className="h-6 w-6 text-ir-blue" />
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold text-center mb-3 text-white">Predictive Maintenance</h3>
