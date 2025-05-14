@@ -1,22 +1,32 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrainFront, Key, User } from "lucide-react";
+import { TrainFront, Mail, Key } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
+    if (!email || !password) {
       toast({
         title: "Required Fields",
         description: "Please fill in all fields",
@@ -28,12 +38,12 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      // Store username and password in session storage for OTP verification
-      sessionStorage.setItem("username", username);
-      sessionStorage.setItem("password", password);
+      const success = await login(email, password);
       
-      // Navigate to OTP verification page
-      navigate("/verify-otp");
+      if (success) {
+        // Navigate to dashboard
+        navigate('/dashboard');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +62,7 @@ const LoginPage = () => {
       <div className="flex-1 flex items-center justify-center">
         <Card className="w-full max-w-md bg-gray-800 border-gray-700 shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-white">Official Login</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-white">Login</CardTitle>
             <CardDescription className="text-center text-gray-400">
               Enter your credentials to access the dashboard
             </CardDescription>
@@ -61,12 +71,12 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center px-3 py-2 rounded-md bg-gray-900 border border-gray-700">
-                  <User className="h-5 w-5 text-gray-400 mr-2" />
+                  <Mail className="h-5 w-5 text-gray-400 mr-2" />
                   <Input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="border-0 bg-transparent focus-visible:ring-0 text-white"
                   />
                 </div>
@@ -90,8 +100,17 @@ const LoginPage = () => {
                 className="w-full bg-ir-blue hover:bg-blue-700" 
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : "Continue"}
+                {isLoading ? "Processing..." : "Login"}
               </Button>
+
+              <div className="text-center mt-4">
+                <p className="text-gray-400">
+                  Don't have an account?{" "}
+                  <Link to="/register" className="text-ir-blue hover:text-blue-400">
+                    Register
+                  </Link>
+                </p>
+              </div>
             </form>
           </CardContent>
         </Card>

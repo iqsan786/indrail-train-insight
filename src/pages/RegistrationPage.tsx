@@ -1,23 +1,30 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrainFront, Key, User, Mail, Phone, CreditCard } from "lucide-react";
+import { TrainFront, Key, User, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
-    aadhar: "",
     email: "",
-    phone: "",
     username: "",
     password: "",
     confirmPassword: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signup, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,15 +53,6 @@ const RegistrationPage = () => {
       return;
     }
 
-    if (formData.aadhar.length !== 12 || !/^\d+$/.test(formData.aadhar)) {
-      toast({
-        title: "Invalid Aadhaar",
-        description: "Please enter a valid 12-digit Aadhaar number",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       toast({
         title: "Invalid Email",
@@ -64,26 +62,18 @@ const RegistrationPage = () => {
       return;
     }
 
-    if (!/^\d{10}$/.test(formData.phone)) {
-      toast({
-        title: "Invalid Phone",
-        description: "Please enter a valid 10-digit phone number",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      // Mock registration process - in a real app, this would call an API
-      setTimeout(() => {
-        toast({
-          title: "Registration Successful",
-          description: "Your account has been created. Please login.",
-        });
-        navigate("/login");
-      }, 1500);
+      const success = await signup(
+        formData.email,
+        formData.password,
+        formData.username
+      );
+      
+      if (success) {
+        navigate('/dashboard');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -102,28 +92,13 @@ const RegistrationPage = () => {
       <div className="flex-1 flex items-center justify-center py-8">
         <Card className="w-full max-w-md bg-gray-800 border-gray-700 shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-white">Official Registration</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-white">Register</CardTitle>
             <CardDescription className="text-center text-gray-400">
               Create your account to access the dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center px-3 py-2 rounded-md bg-gray-900 border border-gray-700">
-                  <CreditCard className="h-5 w-5 text-gray-400 mr-2" />
-                  <Input
-                    type="text"
-                    name="aadhar"
-                    placeholder="Aadhaar Number"
-                    value={formData.aadhar}
-                    onChange={handleChange}
-                    className="border-0 bg-transparent focus-visible:ring-0 text-white"
-                    maxLength={12}
-                  />
-                </div>
-              </div>
-              
               <div className="space-y-2">
                 <div className="flex items-center px-3 py-2 rounded-md bg-gray-900 border border-gray-700">
                   <Mail className="h-5 w-5 text-gray-400 mr-2" />
@@ -134,21 +109,6 @@ const RegistrationPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="border-0 bg-transparent focus-visible:ring-0 text-white"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center px-3 py-2 rounded-md bg-gray-900 border border-gray-700">
-                  <Phone className="h-5 w-5 text-gray-400 mr-2" />
-                  <Input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="border-0 bg-transparent focus-visible:ring-0 text-white"
-                    maxLength={10}
                   />
                 </div>
               </div>
@@ -206,14 +166,9 @@ const RegistrationPage = () => {
               <div className="text-center mt-4">
                 <p className="text-gray-400">
                   Already have an account?{" "}
-                  <Button 
-                    type="button" 
-                    variant="link" 
-                    className="p-0 text-ir-blue hover:text-blue-400"
-                    onClick={() => navigate("/login")}
-                  >
+                  <Link to="/login" className="text-ir-blue hover:text-blue-400">
                     Login
-                  </Button>
+                  </Link>
                 </p>
               </div>
             </form>
